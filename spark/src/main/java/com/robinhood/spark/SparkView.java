@@ -46,13 +46,16 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     private static final String TAG = "Spark";
 
     // styleable values
-    @ColorInt private int lineColor;
+    @ColorInt
+    private int lineColor;
     private float lineWidth;
     private float cornerRadius;
     private boolean fill;
-    @ColorInt private int baseLineColor;
+    @ColorInt
+    private int baseLineColor;
     private float baseLineWidth;
-    @ColorInt private int scrubLineColor;
+    @ColorInt
+    private int scrubLineColor;
     private float scrubLineWidth;
     private boolean scrubEnabled;
     private boolean animateChanges;
@@ -178,26 +181,26 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         // make our main graph path
         sparkPath.reset();
         for (int i = 0; i < adapterCount; i++) {
-            final float x = scaleHelper.getX(adapter.getX(i));
-            final float y = scaleHelper.getY(adapter.getY(i));
+            final double x = scaleHelper.getX(adapter.getX(i));
+            final double y = scaleHelper.getY(adapter.getY(i));
 
             if (i == 0) {
-                sparkPath.moveTo(x, y);
+                sparkPath.moveTo((float) x, (float) y);
             } else {
-                sparkPath.lineTo(x, y);
+                sparkPath.lineTo((float) x, (float) y);
             }
 
             if (scrubEnabled) {
-                xPoints.add(x);
+                xPoints.add((float) x);
             }
         }
 
         // if we're filling the graph in, close the path's circuit
         if (fill) {
-            float lastX = scaleHelper.getX(adapter.getCount() - 1);
+            double lastX = scaleHelper.getX(adapter.getCount() - 1);
             float bottom = getHeight() - getPaddingBottom();
             // line straight down to the bottom of the view
-            sparkPath.lineTo(lastX, bottom);
+            sparkPath.lineTo((float) lastX, bottom);
             // line straight left to far edge of the view
             sparkPath.lineTo(getPaddingStart(), bottom);
             // line straight up to meet the first point
@@ -207,9 +210,9 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         // make our base line path
         baseLinePath.reset();
         if (adapter.hasBaseLine()) {
-            float scaledBaseLine = scaleHelper.getY(adapter.getBaseLine());
-            baseLinePath.moveTo(0, scaledBaseLine);
-            baseLinePath.lineTo(getWidth(), scaledBaseLine);
+            double scaledBaseLine = scaleHelper.getY(adapter.getBaseLine());
+            baseLinePath.moveTo(0, (float) scaledBaseLine);
+            baseLinePath.lineTo(getWidth(), (float) scaledBaseLine);
         }
 
         renderPath.reset();
@@ -226,7 +229,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
      * @param x    the value to scale (should be the same units as your graph's data points)
      * @return the pixel coordinates of where this point is located in SparkView's bounds
      */
-    public float getScaledX(float x) {
+    public double getScaledX(float x) {
         if (scaleHelper == null) {
             Log.w(TAG, "getScaledX() - no scale available yet.");
             return x;
@@ -242,7 +245,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
      * @param y    the value to scale (should be the same units as your graph's data points)
      * @return the pixel coordinates of where this point is located in SparkView's bounds
      */
-    public float getScaledY(float y) {
+    public double getScaledY(float y) {
         if (scaleHelper == null) {
             Log.w(TAG, "getScaledX() - no scale available yet.");
             return y;
@@ -282,7 +285,8 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     /**
      * Get the color of the sparkline
      */
-    @ColorInt public int getLineColor() {
+    @ColorInt
+    public int getLineColor() {
         return lineColor;
     }
 
@@ -403,7 +407,8 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     /**
      * Get the color of the base line
      */
-    @ColorInt public int getBaseLineColor() {
+    @ColorInt
+    public int getBaseLineColor() {
         return baseLineColor;
     }
 
@@ -453,7 +458,8 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     /**
      * Get the color of the scrub line
      */
-    @ColorInt public int getScrubLineColor() {
+    @ColorInt
+    public int getScrubLineColor() {
         return scrubLineColor;
     }
 
@@ -578,9 +584,9 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         final float width, height;
         final int size;
         // the scale factor for the Y values
-        final float xScale, yScale;
+        final double xScale, yScale;
         // translates the Y values back into the bounding rect after being scaled
-        final float xTranslation, yTranslation;
+        final double xTranslation, yTranslation;
 
         public ScaleHelper(SparkAdapter adapter, RectF contentRect, float lineWidth, boolean fill) {
             final float leftPadding = contentRect.left;
@@ -595,15 +601,15 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
             this.size = adapter.getCount();
 
             // get data bounds from adapter
-            RectF bounds = adapter.getDataBounds();
+            Rect bounds = adapter.getDataBounds();
 
             // if data is a line (which technically has no size), expand bounds to center the data
             bounds.inset(bounds.width() == 0 ? -1 : 0, bounds.height() == 0 ? -1 : 0);
 
-            final float minX = bounds.left;
-            final float maxX = bounds.right;
-            final float minY = bounds.top;
-            final float maxY = bounds.bottom;
+            final long minX = bounds.left;
+            final long maxX = bounds.right;
+            final double minY = bounds.top;
+            final double maxY = bounds.bottom;
 
             // xScale will compress or expand the min and max x values to be just inside the view
             this.xScale = width / (maxX - minX);
@@ -618,7 +624,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         /**
          * Given the 'raw' X value, scale it to fit within our view.
          */
-        public float getX(float rawX) {
+        public double getX(float rawX) {
             return rawX * xScale + xTranslation;
         }
 
@@ -626,7 +632,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
          * Given the 'raw' Y value, scale it to fit within our view. This method also 'flips' the
          * value to be ready for drawing.
          */
-        public float getY(float rawY) {
+        public double getY(float rawY) {
             return height - (rawY * yScale) + yTranslation;
         }
     }
@@ -670,7 +676,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         if (index >= 0) return index;
 
         // otherwise, calculate the binary search's specified insertion index
-        index = - 1 - index;
+        index = -1 - index;
 
         // if we're inserting at 0, then our guaranteed nearest index is 0
         if (index == 0) return index;

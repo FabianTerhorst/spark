@@ -18,7 +18,6 @@ package com.robinhood.spark;
 
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
-import android.graphics.RectF;
 import android.support.annotation.VisibleForTesting;
 
 /**
@@ -41,7 +40,7 @@ public abstract class SparkAdapter {
     /**
      * @return the float representation of the X value of the point at the given index.
      */
-    public float getX(int index) {
+    public long getX(int index) {
         return index;
     }
 
@@ -64,16 +63,16 @@ public abstract class SparkAdapter {
      *
      * @return a RectF of the bounds desired around this adapter's data.
      */
-    public RectF getDataBounds() {
+    public Rect getDataBounds() {
         final int count = getCount();
         final boolean hasBaseLine = hasBaseLine();
 
-        float minY = hasBaseLine ? getBaseLine() : Float.MAX_VALUE;
-        float maxY = hasBaseLine ? minY : -Float.MAX_VALUE;
-        float minX = Float.MAX_VALUE;
-        float maxX = -Float.MAX_VALUE;
+        double minY = hasBaseLine ? getBaseLine() : Double.MAX_VALUE;
+        double maxY = hasBaseLine ? minY : -Double.MAX_VALUE;
+        long minX = Long.MAX_VALUE;
+        long maxX = -Long.MAX_VALUE;
         for (int i = 0; i < count; i++) {
-            final float x = getX(i);
+            final long x = getX(i);
             minX = Math.min(minX, x);
             maxX = Math.max(maxX, x);
 
@@ -90,8 +89,8 @@ public abstract class SparkAdapter {
      * Hook for unit tests
      */
     @VisibleForTesting
-    RectF createRectF(float left, float top, float right, float bottom) {
-        return new RectF(left, top, right, bottom);
+    Rect createRectF(long left, double top, long right, double bottom) {
+        return new Rect(left, top, right, bottom);
     }
 
     /**
