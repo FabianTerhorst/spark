@@ -47,7 +47,7 @@ public abstract class SparkAdapter {
     /**
      * @return the float representation of the Y value of the point at the given index.
      */
-    public abstract float getY(int index);
+    public abstract double getY(int index);
 
     /**
      * Gets the float representation of the boundaries of the entire dataset. By default, this will
@@ -76,7 +76,7 @@ public abstract class SparkAdapter {
             minX = Math.min(minX, x);
             maxX = Math.max(maxX, x);
 
-            final float y = getY(i);
+            final double y = getY(i);
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
         }
