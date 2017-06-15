@@ -632,7 +632,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
          * Given the 'raw' Y value, scale it to fit within our view. This method also 'flips' the
          * value to be ready for drawing.
          */
-        public double getY(float rawY) {
+        public double getY(double rawY) {
             return height - (rawY * yScale) + yTranslation;
         }
     }
